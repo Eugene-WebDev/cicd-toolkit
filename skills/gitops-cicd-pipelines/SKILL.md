@@ -83,6 +83,13 @@ The subtlety is **histograms**: Prometheus exposes them as cumulative `_bucket`/
 
 Kubernetes is not a prerequisite for GitOps discipline — the folder-per-environment + promotion-as-a-commit model works on a single VPS too.
 
+## Operational specs — intent separate from execution (added 2026-10-08)
+
+A pipeline exiting 0 is not proof the operation succeeded (Hugo Teijiz, freeCodeCamp 2026-09-24 and 2026-09-29). Keep a vendor-neutral **spec** next to the pipeline:
+- **Preconditions** (may we start?), **constraints** (must hold during/after, e.g. min available replicas, error-rate and latency ceilings), **evidence requirements** (which metrics/logs prove it), **recovery rules** (rollback/alert).
+- After execution, collect the evidence and **evaluate against the spec** → pass/fail record = audit trail. Several executors (Argo, a script, an agent) can satisfy the same spec, so tool migration doesn't lose the rules.
+- Matters most with AI agents executing ops: free in *method*, bounded by *intent*. A spec doesn't make a wrong threshold right — review it like code.
+
 ## Anti-patterns
 - Branch-per-environment as the promotion mechanism → drift, and "what's in prod" becomes a diff.
 - Rebuilding every service on every push because change detection was never made deterministic.
